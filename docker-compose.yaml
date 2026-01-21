@@ -1,0 +1,66 @@
+
+services:
+  app: &app
+    container_name: attendance-management
+    restart: on-failure
+    image: tias/attendance-management
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT:-8000}:${PORT:-8000}
+    environment:
+      - PORT
+      - DB_URL
+      - DB_USERNAME
+      - DB_PASSWORD
+      - JWT_SECRET
+      - LOG_LEVEL
+
+    profiles:
+      - prod
+    networks:
+      - attendance-management-network
+
+  app-dev:
+    <<: *app
+    container_name: attendance-management-dev
+    image: tias/attendance-management-dev
+    environment:
+      PORT: ${PORT:-8877}
+      SPRING_PROFILES_ACTIVE: dev
+      DB_URL: jdbc:sqlserver://db-dev:1433;databaseName=attendanceDb;trustServerCertificate=true
+
+    profiles:
+      - dev
+    depends_on:
+      - db-dev
+  db-dev:
+    container_name: attendance-management-dev-db
+    restart: always
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: attendanceDb
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - attendance_management_dev_db_volume:/var/lib/mysql
+    profiles:
+      - dev
+      - infra
+    networks:
+      - attendance-management-network
+
+
+networks:
+  attendance-management-network:
+    name: attendance-management-network
+volumes:
+  attendance_management_dev_db_volume:
+    name: attendance-management-dev-db-volume

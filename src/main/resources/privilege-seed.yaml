@@ -1,0 +1,152 @@
+auth-seed:
+  enabled: true
+  data:
+    default-user:
+      email: ${DEFAULT_USER_EMAIL:johndoe@alphastarav.com} # NOTE: This user needs to be in your ldap or AD server
+      role: ADMIN
+    privileges:
+      FETCH_USER: Provides access to fetch user details
+      LIST_USERS: Provides access to list all users.
+      ASSIGN_USER_ROLE: Provides access to assign a role to user.
+      CREATE_USER: Provides access to create users.
+      UPDATE_USER: Provides access to update users details.
+      SOFT_DELETE_USER: Provides access to soft delete user
+
+      LIST_APPLICATIONS: Provides access to list all applications.
+      CREATE_APPLICATIONS: Provides access to create applications.
+      ASSIGN_APPLICATION_PRIVILEGE: Provides access to assign privilege to applications.
+      FETCH_APPLICATION_DETAILS: Provide access to get application details
+      UPDATE_APPLICATION: Provide access to update application
+      SOFT_DELETE_APPLICATION: Provide access to soft delete application
+
+      LIST_PRIVILEGES: Provides access to list privileges.
+
+      CREATE_ROLES: Provides access to create roles.
+      UPDATE_ROLES: Provides access to update roles.
+      LIST_ROLES: Provides access to list all roles.
+      FETCH_ROLE: Provide access to fetch role details
+      ASSIGN_ROLE_PRIVILEGE: Provides access to assign privileges to roles.
+      ASSIGN_ROLE_APPLICATION: Provides access to add application privileges to roles.
+      SOFT_DELETE_ROLE: Provides access to soft delete role
+
+      CREATE_AIRCRAFT: Provides access to create aircraft
+      LIST_AIRCRAFT: Provides access to list aircraft
+      UPDATE_AIRCRAFT: Provides access to update aircraft
+      DELETE_AIRCRAFT: Provides access to delete aircraft
+      FETCH_PM_AIRCRAFT: Provides access to fetch aircraft
+      LIST_AIRPORTS: Provide access to list airport
+
+      CREATE_ID_TYPE: Provide access to create id type
+      LIST_ID_TYPE: Provide access to list id type
+      UPDATE_ID_TYPE: Provide access to update id type
+      DELETE_ID_TYPE: Provide access to delete id type
+
+      LIST_NATIONALITIES: Provide access to list nationalities
+
+      CREATE_PASSENGER: Provide access to create passenger
+      LIST_PASSENGER: Provide access to list passengers
+      UPDATE_PASSENGER: Provide access to update passenger
+      DELETE_PASSENGER: Provide access to delete passenger
+
+      CREATE_PASSENGER_TYPE: Provide access to create passenger type
+      LIST_PASSENGER_TYPE: Provide access to list passenger types
+      UPDATE_PASSENGER_TYPE: Provide access to update passenger type
+      DELETE_PASSENGER_TYPE: Provide access to delete passenger type
+
+      MRZ_SCAN: Provide access to get passenger details using scanner
+
+      LIST_TRIPS: Provide access to list trips
+      LIST_TRIP_PASSENGERS: Provide access to list passengers under trip
+      CREATE_TRIP: Provide access to create trip
+      UPDATE_TRIP: Provide access to update trip
+      ADD_TRIP_PASSENGERS: Provide access to add passengers to trip
+      DELETE_TRIP: Provide access to delete trip
+      FETCH_TRIP: Provide access to fetch trip details
+      GENERATE_TRIP_REPORT: Provide access to Generate trip report
+
+      FETCH_PASSENGER: Provide access to fetch passenger details
+
+      CREATE_FEEDBACK: Provide access to create feedback
+      DELETE_FEEDBACK: Provide access to delete feedback
+      LIST_ALL_FEEDBACKS: Provide access to list all feedbacks
+      FETCH_FEEDBACK: Provide access to fetch feedback
+      UPDATE_FEEDBACK: Provide access to update feedback
+      UPLOAD_FEEDBACK_ATTACHMENTS: Provide access to upload comment attachment
+
+      LIST_FEEDBACK_TYPES: Provide access to list feedback types
+      CREATE_FEEDBACK_TYPE: Provide access to create feedback type
+      DELETE_FEEDBACK_TYPE: Provide access to delete feedback type
+      FETCH_FEEDBACK_TYPE: Provide access to fetch feedback type
+      UPDATE_FEEDBACK_TYPE: Provide access to update feedback type
+
+      CREATE_FLIGHT_REPORT: Provide access to create flight report
+      LIST_FLIGHT_REPORT_FEEDBACKS: Provide access to list feedback under flight report
+      LIST_FLIGHT_REPORTS: Provide access to list all flight reports
+      FETCH_FLIGHT_REPORT: Provide access to fetch flight report
+      UPLOAD_FLIGHT_REPORT_ATTACHMENTS: Provide access to upload flight report attachment
+      DOWNLOAD_FLIGHT_REPORT_ATTACHMENTS: Provide access to download flight report attachments
+      UPDATE_FLIGHT_REPORT: Provide access to update flight report
+      CONFIRM_FLIGHT_REPORT: Provide access to confirm flight report
+      DELETE_FLIGHT_REPORT: Provide access to delete flight report
+
+      CREATE_FLIGHT_TYPE: Provide access to create flight report
+      LIST_FLIGHT_TYPES: Provide access to list all flight types
+      FETCH_FLIGHT_TYPE: Provide access to fetch flight type
+      UPDATE_FLIGHT_TYPE: Provide access to update flight type
+      DELETE_FLIGHT_TYPE: Provide access to delete flight type
+
+      FETCH_TICKET: Provide access to fetch ticket
+      CREATE_TICKET: Provide access to create ticket
+      LIST_TICKETS: Provide access to list all tickets
+      DELETE_TICKET: Provide access to delete ticket
+
+      CHANGE_TICKET_OPEN: Provide access to change ticket status to OPEN
+      CHANGE_TICKET_ON_HOLD: Provide access to change ticket status to ON_HOLD
+      CHANGE_TICKET_RESOLVED: Provide access to change ticket status to RESOLVED
+      CHANGE_TICKET_CLOSED: Provide access to change ticket status to CLOSED
+
+      LIST_USER_GROUPS: Provide access to list user groups
+      CREATE_USER_GROUP: Provide access to create user group
+      DELETE_USER_GROUP: Provide access to delete user group
+      FETCH_USER_GROUP: Provide access to fetch user group
+      UPDATE_USER_GROUP: Provide access to update user group
+
+      LIST_MY_TICKETS: Provide access to list current users tickets
+      LIST_MY_FLIGHT_REPORTS: Provide access to list current users flight reports
+
+      ADD_SUBSCRIBERS_FLIGHT_REPORT: Provide access to add subscribers to flight report
+      FETCH_FLIGHT_REPORT_SUBSCRIBER: Provide access to fetch flight report of subscribers
+      UPDATE_FLIGHT_REPORT_SUBSCRIBER: Provide access to update flight report of subscribers
+      DELETE_FLIGHT_REPORT_SUBSCRIBER: Provide access to delete flight report of subscribers
+
+      ADD_TICKET_SUBSCRIBERS: Provide access to add a ticket for a subscriber
+      DELETE_TICKET_SUBSCRIBERS: Provide access to delete a ticket for a subscriber
+      UPDATE_TICKET_SUBSCRIBER: Provide access to update a ticket for a subscriber
+      LIST_TICKET_SUBSCRIBERS: Provide access to list the ticket subscribers
+
+
+
+
+
+    roles:
+      ADMIN:
+        description: Administrator role.
+        privileges:
+          - CREATE_USER
+          - FETCH_USER
+          - LIST_USERS
+          - ASSIGN_USER_ROLE
+          - UPDATE_USER
+          - SOFT_DELETE_USER
+
+    applications:
+      Identity:
+        features:
+          auth:
+            privileges:
+              - FETCH_USER
+              - LIST_USERS
+              - ASSIGN_USER_ROLE
+              - CREATE_USER
+              - UPDATE_USER
+              - SOFT_DELETE_USER

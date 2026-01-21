@@ -1,0 +1,85 @@
+spring:
+  application:
+    name: Identity
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: UPDATE
+    show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  mvc:
+    static-path-pattern: /api/static/**
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    protocol: ${MAIL_PROTOCOL}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+app:
+  active-directory:
+    enabled: true
+    domain: ${AD_DOMAIN}
+    url: ${AD_URL}
+  security:
+    username: johndoe
+    password: password
+  jwt:
+    expiry-in-ms: ${JWT_ACCESS_TOKEN_EXPIRY_IN_MS:1800000} # 30 min
+    algorithm: HS256
+    secret: ${JWT_SECRET}
+    expiry-in-ms-refresh-token: ${JWT_REFRESH_TOKEN_EXPIRY_IN_MS:2628000000} # 1 months
+  utils:
+    max-login-attempts: 4
+    time-in-seconds-to-unlock-user: ${TIME_IN_SECONDS_TO_AUTO_UNLOCK_USER_ACCOUNT:300}
+    time-zone: UTC
+    tokenUtils:
+      - type: OTP
+        expiryInMs: 300000
+        perUserUnique: false
+        limit: 3
+
+    trusted-sender: ${MAIL_TRUSTED_SENDER:admin@dev.com}
+    sms-base-url: ${SMS_SERVICE_API}
+    sms-username: ${SMS_USERNAME}
+    sms-api-key: ${SMS_API_KEY}
+  cors:
+    allowed-methods: [ GET, POST, PUT, DELETE, PATCH ]
+    allowed-headers: [ "*" ]
+    allowed-origins: [ "*" ]
+    exposed-headers: [ ]
+    credentials: false
+server:
+  port: ${PORT:8000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    path: /api/docs/swagger-ui
+    urls:
+      - name: External
+        url: /api/static/openapi.yaml
+
+
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}

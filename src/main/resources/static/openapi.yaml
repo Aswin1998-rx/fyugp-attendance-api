@@ -1,0 +1,2693 @@
+openapi: 3.0.3
+info:
+  version: v1.0.0
+  title: Attendance Application API
+  description: API for Attendance application.
+  x-audience: external-partner
+
+servers:
+  - url: 'http://{host}:{port}'
+    description: http server
+    variables:
+      host:
+        default: 'localhost'
+        description: identity server host
+      port:
+        default: '8000'
+        description: identity server port
+  - url: 'https://{host}'
+    description: https server
+    variables:
+      host:
+        default: 'localhost'
+        description: identity server domain
+
+security:
+  - AccessToken: []
+
+tags:
+  - name: Auth
+    description: Open Authentication/credential related Apis
+  - name: Actuator
+    description: spring boot actuator apis
+  - name: Users
+    description: User management apis
+  - name: UserGroups
+    description: User groups api
+  - name: Clients
+    description: client management apis
+  - name: ClientAuth
+    description: Open client Authentication/credential related Apis
+
+
+paths:
+  /actuator/health:
+    get:
+      summary: checks if server is up
+      operationId: health
+      security: []
+      tags:
+        - Actuator
+      responses:
+        "200":
+          description: success response
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/auth/login:
+    post:
+      summary: Authentication a user
+      operationId: passwordLogin
+      security: []
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        "200":
+          description: Successful login response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginApiResponse'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "500":
+          $ref: '#/components/responses/UnexpectedError'
+  /api/v1/auth/logout:
+    post:
+      summary: Record user login and logout times
+      operationId: userLogout
+      tags:
+        - Auth
+      responses:
+        "200":
+          description: Successful logged time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "500":
+          $ref: '#/components/responses/UnexpectedError'
+  /api/v1/auth/refresh-token:
+    post:
+      summary: Refresh token
+      operationId: refreshToken
+      security:
+        - RefreshToken: []
+      tags:
+        - Auth
+      responses:
+        "200":
+          description: Successfully refreshed jwt token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginApiResponse'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/UnexpectedError'
+  /api/v1/auth/clients/login:
+    post:
+      summary: Authentication a user
+      operationId: clientPasswordLogin
+      security: [ ]
+      tags:
+        - ClientAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        "200":
+          description: Successful login response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientLoginApiResponse'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "500":
+          $ref: '#/components/responses/UnexpectedError'
+  /api/v1/auth/clients/two-factor:
+    post:
+      summary: Authentication a user
+      operationId: clientTwoFactorLogin
+      security: [ ]
+      tags:
+        - ClientAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpValidationRequest'
+      responses:
+        "200":
+          description: Successful login response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientLoginApiResponse'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "500":
+          $ref: '#/components/responses/UnexpectedError'
+  /api/v1/auth/clients/resend-otp:
+    post:
+      summary: for resend client  two factor otp
+      operationId: clientResendOtp
+      security: [ ]
+      tags:
+        - ClientAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendOtpRequest'
+      responses:
+        "200":
+          description: otp send successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "500":
+          $ref: '#/components/responses/UnexpectedError'
+  /api/v1/users:
+    get:
+      summary: Get list of users
+      operationId: getAllUsers
+      deprecated: false
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Sort"
+        - $ref: "#/components/parameters/UserSearch"
+        - $ref: "#/components/parameters/UserIdSearch"
+      responses:
+        "200":
+          description: list of users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUsersResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+    post:
+      summary: Create a new user
+      operationId: createUser
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/users/me:
+    get:
+      summary: Get logged in user details
+      operationId: getLoggedInUserDetails
+      tags:
+        - Users
+      responses:
+        "200":
+          description: fetch user details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfileResponse"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/users/{id}:
+    get:
+      summary: Get user details using id
+      operationId: getUserById
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The user's id that needs to be fetched"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Users
+      responses:
+        "200":
+          description: fetch user details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDetailedResponse"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Update user by id
+      operationId: updateUser
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The user's id that needs to be updated"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        "200":
+          description: User details updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+    delete:
+      summary: Soft delete users
+      operationId: softDeleteUser
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The user's id that needs to be soft deleted"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Users
+      responses:
+        "200":
+          description: User soft deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/internal-users/{id}:
+    get:
+      summary: Get user details using id
+      operationId: getInternalUserById
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The user's id that needs to be fetched"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      security:
+        - BasicAuth: [ ]
+      tags:
+        - Users
+      responses:
+        "200":
+          description: fetch user details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDetailedResponse"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/users/{user-id}/assign-roles:
+    post:
+      summary: Assign roles to user
+      operationId: assignRolesToUser
+      parameters:
+        - name: "user-id"
+          in: "path"
+          description: "The user's id to whom the roles to be assigned"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignRolesToUserRequest'
+      responses:
+        "200":
+          description: Successful user role updation response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/roles:
+    get:
+      summary: Get list of roles
+      operationId: getAllRoles
+      deprecated: false
+      tags:
+        - Roles
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Sort"
+        - $ref: "#/components/parameters/RoleSearch"
+      responses:
+        "200":
+          description: list of roles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetRolesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+    post:
+      summary: Create a new role
+      operationId: createRole
+      tags:
+        - Roles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoleRequest'
+      responses:
+        "201":
+          description: Role created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/roles/{id}:
+    patch:
+      summary: Update role by id
+      operationId: updateRole
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The role's id that needs to be updated"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Roles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRoleRequest'
+      responses:
+        "200":
+          description: Role details updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+    delete:
+      summary: Soft delete role by id
+      operationId: softDeleteRole
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The role's id that needs to be soft deleted"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Roles
+      responses:
+        "200":
+          description: Role soft deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/roles/{role-id}/assign-privileges:
+    post:
+      summary: Assign privileges to role
+      operationId: assignPrivilegesToRole
+      parameters:
+        - name: "role-id"
+          in: "path"
+          description: "The role's id to which the privileges to be assigned"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Roles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignPrivilegesToRoleRequest'
+      responses:
+        "200":
+          description: Successful privilege-role updation response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/roles/{role-id}/add-applications:
+    post:
+      summary: Add privileges of applications to role
+      operationId: addPrivilegesOfApplicationsToRole
+      parameters:
+        - name: "role-id"
+          in: "path"
+          description: "The role's id to which the privileges to be added"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Roles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddApplicationsToRoleRequest'
+      responses:
+        "200":
+          description: Successful privilege-role updation response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/roles/{role-id}:
+    get:
+      summary: Get role by id
+      operationId: getRoleById
+      deprecated: false
+      tags:
+        - Roles
+      parameters:
+        - name: "role-id"
+          in: "path"
+          description: "The role's id to which the privileges to be assigned"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      responses:
+        "200":
+          description: list of roles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleDetailedResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/privileges:
+    get:
+      summary: Get list of privileges
+      operationId: getAllPrivileges
+      deprecated: false
+      tags:
+        - Privileges
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Sort"
+        - $ref: "#/components/parameters/PrivilegeSearch"
+      responses:
+        "200":
+          description: list of privileges
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPrivilegesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/applications:
+    get:
+      summary: Get list of applications
+      operationId: getAllApplications
+      deprecated: false
+      tags:
+        - Applications
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Sort"
+        - $ref: "#/components/parameters/ApplicationSearch"
+      responses:
+        "200":
+          description: list of applications
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetApplicationsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+    post:
+      summary: Create a new application
+      operationId: createApplication
+      tags:
+        - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApplicationRequest'
+      responses:
+        "201":
+          description: Application created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/applications/{id}:
+    get:
+      summary: Get application's details
+      operationId: getApplicationDetails
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The application's id that needs to be fetched"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Applications
+      responses:
+        "200":
+          description: fetch applications details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationDetailedResponse"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Update application by id
+      operationId: updateApplication
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The application's id that needs to be updated"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateApplicationRequest'
+      responses:
+        "200":
+          description: Application details updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+    delete:
+      summary: Soft delete application using id
+      operationId: softDeleteApplicationById
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The application's id to be soft deleted"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Applications
+      responses:
+        "200":
+          description: Successfully soft deleted application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/applications/{application-id}/assign-privileges:
+    post:
+      summary: Assign privileges to application
+      operationId: assignPrivilegesToApplication
+      parameters:
+        - name: "application-id"
+          in: "path"
+          description: "The application's id to which the privileges to be assigned"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignPrivilegesToApplicationRequest'
+      responses:
+        "200":
+          description: Successful privilege-role updation response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/applications/details:
+    get:
+      summary: Get list of applications with features
+      operationId: getAllApplicationsWithDetails
+      deprecated: false
+      tags:
+        - Applications
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Sort"
+        - $ref: "#/components/parameters/ApplicationSearch"
+      responses:
+        "200":
+          description: list of applications
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetApplicationDetailsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+
+  /api/v1/user-groups:
+    get:
+      summary: Get list of user groups
+      operationId: getAllUserGroups
+      deprecated: false
+      tags:
+        - UserGroups
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Sort"
+        - $ref: "#/components/parameters/UserGroupSearch"
+      responses:
+        "200":
+          description: list of user groups
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUserGroupsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+    post:
+      summary: Create a new user
+      operationId: createUserGroup
+      tags:
+        - UserGroups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserGroupRequest'
+      responses:
+        "201":
+          description: User group created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGroupResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/user-groups/{name}/users:
+    get:
+      summary: Get list of user groups
+      operationId: getAllUsersByGroup
+      deprecated: false
+      tags:
+        - UserGroups
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Sort"
+        - $ref: "#/components/parameters/UserGroupUserSearch"
+        - name: "name"
+          in: "path"
+          description: "The user group name of which users needs to be fetched"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: list of users under user groups
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUsersByGroupResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/user-groups/{id}:
+    get:
+      summary: Get user group details using id
+      operationId: getUserGroupById
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The user group id that needs to be fetched"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - UserGroups
+      responses:
+        "200":
+          description: fetch user group details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserGroupDetailedResponse"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Update user group by id
+      operationId: updateUserGroup
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The user group id that needs to be updated"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - UserGroups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserGroupRequest'
+      responses:
+        "200":
+          description: User group details updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGroupResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+    delete:
+      summary: Delete user group
+      operationId: deleteUserGroup
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The user group id that needs to be soft deleted"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - UserGroups
+      responses:
+        "200":
+          description: User group deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+
+  /api/v1/clients:
+    get:
+      summary: Get list of clients
+      operationId: getAllClients
+      deprecated: false
+      tags:
+        - Clients
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Sort"
+        - $ref: "#/components/parameters/ClientSearch"
+      responses:
+        "200":
+          description: list of clients
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetClientsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+    post:
+      summary: Create a new client
+      operationId: createClient
+      tags:
+        - Clients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClientRequest'
+      responses:
+        "201":
+          description: Client created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+
+  /api/v1/clients/{id}:
+    get:
+      summary: Get client details using id
+      operationId: getClientById
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The client's id that needs to be fetched"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Clients
+      responses:
+        "200":
+          description: fetch client details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientResponse"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Update client by id
+      operationId: updateClient
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The client's id that needs to be updated"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Clients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateClientRequest'
+      responses:
+        "200":
+          description: client details updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+    delete:
+      summary: Soft delete client
+      operationId: softDeleteClient
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The client's id that needs to be soft deleted"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Clients
+      responses:
+        "200":
+          description: client soft deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/clients/reset-password:
+    post:
+      summary: Reset user password
+      description: Allows a user to reset their password.
+      operationId: resetPassword
+      tags:
+        - Clients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+
+      responses:
+        '200':
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+
+
+
+
+components:
+  securitySchemes:
+    AccessToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: The authorization token used by the user to authorize API requests.
+    RefreshToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: The token used to refresh an expired access token.
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: Basic authentication using username and password.
+  parameters:
+    Page:
+      in: query
+      name: page
+      schema:
+        type: integer
+        format: int32
+        default: 0
+      required: false
+      description: the page number.
+    PageSize:
+      in: query
+      name: size
+      schema:
+        type: integer
+        format: int32
+        default: 20
+      required: false
+      description: the size of a page
+    Sort:
+      in: query
+      name: sort
+      schema:
+        type: string
+        default: id,asc
+      required: false
+      example: id,asc
+      description: sort
+    UserGroupUserSearch:
+      in: query
+      name: search
+      schema:
+        type: string
+      required: false
+      description: This adds a string search to the following fields.
+        - user name
+        - user emai
+    UserGroupSearch:
+      in: query
+      name: name
+      schema:
+        type: string
+      required: false
+      description: This adds a string search to the following fields.
+        - name
+    UserSearch:
+      in: query
+      name: search
+      schema:
+        type: string
+      required: false
+      description: This adds a string search to the following fields.
+        - name
+        - username
+        - email
+        - designation
+        - epn
+    RoleSearch:
+      in: query
+      name: search
+      schema:
+        type: string
+      required: false
+      description: This adds a string search to the following fields.
+        - name
+    ApplicationSearch:
+      in: query
+      name: search
+      schema:
+        type: string
+      required: false
+      description: This adds a string search to the following fields.
+        - name
+    PrivilegeSearch:
+      in: query
+      name: search
+      schema:
+        type: string
+      required: false
+      description: This adds a string search to the following fields.
+        - name
+    UserIdSearch:
+      in: query
+      name: ids
+      schema:
+        type: array
+        items:
+          type: "integer"
+          format: "int64"
+      required: false
+      description: This adds a search to the id field.
+        - ids
+    ClientSearch:
+      in: query
+      name: search
+      schema:
+        type: string
+      required: false
+      description: This adds a string search to the following fields.
+        - name
+        - userName
+        - mobileNumber
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "UP"
+    ApiError:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: false
+        message:
+          type: string
+          description: A short error message from server. If there are multiple errors they will be comma seperated
+    UserResponse:
+      type: "object"
+      properties:
+        timestamp:
+          type: "string"
+          format: "date-time"
+          description: The server time at which this response was created.
+        code:
+          type: "integer"
+          format: "int32"
+          description: The status code the server returned.
+        message:
+          type: "string"
+          description: A short error message from server. If there are multiple errors they will be comma seperated
+        status:
+          type: "boolean"
+          description: Whether or not the request was a success or not.
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/UserDto"
+    UserProfileResponse:
+      type: "object"
+      properties:
+        timestamp:
+          type: "string"
+          format: "date-time"
+          description: The server time at which this response was created.
+        code:
+          type: "integer"
+          format: "int32"
+          description: The status code the server returned.
+        message:
+          type: "string"
+          description: A short error message from server. If there are multiple errors they will be comma seperated
+        status:
+          type: "boolean"
+          description: Whether or not the request was a success or not.
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/UserProfileDto"
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        email:
+          type: "string"
+        designation:
+          type: "string"
+        userName:
+          type: "string"
+        epn:
+          type: "string"
+        enabled:
+          type: "boolean"
+        mobileNumber:
+          type: "string"
+          example: "000000000"
+        deleted:
+          type: boolean
+        userType:
+          $ref: "#/components/schemas/UserType"
+
+
+    UserProfileDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        email:
+          type: "string"
+        designation:
+          type: "string"
+        userName:
+          type: "string"
+        epn:
+          type: "string"
+        enabled:
+          type: "boolean"
+        deleted:
+          type: boolean
+        userType:
+          $ref: "#/components/schemas/UserType"
+        mobileNumber:
+          type: "string"
+        Privileges:
+          type: array
+          items:
+            type: string
+
+
+    GetUsersResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserPage"
+    UserPage:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int64
+          description: The current page number.
+        size:
+          type: integer
+          format: int32
+          description: The size of current page.
+        first:
+          type: boolean
+          description: whether current page is the first one.
+        last:
+          type: boolean
+          description: whether current page is the last one.
+        totalPages:
+          type: integer
+          format: int64
+          description: total no:of pages available
+        totalElements:
+          type: integer
+          format: int64
+          description: total no:of elements available.
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserDto"
+    GetRolesResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/RolePage"
+    RolePage:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int64
+          description: The current page number.
+        size:
+          type: integer
+          format: int32
+          description: The size of current page.
+        first:
+          type: boolean
+          description: whether current page is the first one.
+        last:
+          type: boolean
+          description: whether current page is the last one.
+        totalPages:
+          type: integer
+          format: int64
+          description: total no:of pages available
+        totalElements:
+          type: integer
+          format: int64
+          description: total no:of elements available.
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoleDto"
+    GetPrivilegesResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrivilegePage"
+    PrivilegePage:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int64
+          description: The current page number.
+        size:
+          type: integer
+          format: int32
+          description: The size of current page.
+        first:
+          type: boolean
+          description: whether current page is the first one.
+        last:
+          type: boolean
+          description: whether current page is the last one.
+        totalPages:
+          type: integer
+          format: int64
+          description: total no:of pages available
+        totalElements:
+          type: integer
+          format: int64
+          description: total no:of elements available.
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrivilegeDetailedDto"
+    PrivilegeDetailedDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        application:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicationDto"
+            type: ApplicationDto
+    PrivilegeDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        description:
+          type: "string"
+    GetApplicationsResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicationPage"
+    ApplicationPage:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int64
+          description: The current page number.
+        size:
+          type: integer
+          format: int32
+          description: The size of current page.
+        first:
+          type: boolean
+          description: whether current page is the first one.
+        last:
+          type: boolean
+          description: whether current page is the last one.
+        totalPages:
+          type: integer
+          format: int64
+          description: total no:of pages available
+        totalElements:
+          type: integer
+          format: int64
+          description: total no:of elements available.
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicationDto"
+    ApplicationDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        deleted:
+          type: boolean
+    RoleDetailedResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoleDetailedDto"
+    RoleDetailedDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        deleted:
+          type: "boolean"
+        privilege:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrivilegeDetailedDto"
+    ApplicationDetailedResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicationDetailedDto"
+    ApplicationDetailedDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        deleted:
+          type: boolean
+        privilege:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrivilegeDto"
+            type: PrivilegeDto
+    UserDetailedResponse:
+      type: "object"
+      properties:
+        timestamp:
+          type: "string"
+          format: "date-time"
+          description: The server time at which this response was created.
+        code:
+          type: "integer"
+          format: "int32"
+          description: The status code the server returned.
+        message:
+          type: "string"
+          description: A short error message from server. If there are multiple errors they will be comma seperated
+        status:
+          type: "boolean"
+          description: Whether or not the request was a success or not.
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/UserDetailedDto"
+    UserDetailedDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        email:
+          type: "string"
+        designation:
+          type: "string"
+        userName:
+          type: "string"
+        epn:
+          type: "string"
+        mobileNumber:
+          type: "string"
+          example: "000000000"
+        enabled:
+          type: "boolean"
+        deleted:
+          type: "boolean"
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoleDetailedDto"
+    UserGroupResponse:
+      type: "object"
+      properties:
+        timestamp:
+          type: "string"
+          format: "date-time"
+          description: The server time at which this response was created.
+        code:
+          type: "integer"
+          format: "int32"
+          description: The status code the server returned.
+        message:
+          type: "string"
+          description: A short error message from server. If there are multiple errors they will be comma seperated
+        status:
+          type: "boolean"
+          description: Whether or not the request was a success or not.
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/UserGroupDto"
+    CreateUserRequest:
+      type: object
+      required:
+        - name
+        - designation
+        - email
+        - epn
+      properties:
+        name:
+          type: string
+          description: "user's name"
+          x-required-message: "{messages.nameIsRequired}"
+        designation:
+          type: string
+          description: designation of user
+          x-required-message: "{messages.designationIsRequired}"
+        email:
+          type: string
+          format: email
+          description: "user email"
+          x-required-message: "{messages.emailIsRequired}"
+          x-email-message: "{messages.emailShouldBeValid}"
+        epn:
+          type: string
+          pattern: "^[0-9]+$"
+          description: "user EPN number"
+          x-required-message: "{messages.epnIsRequired}"
+          x-pattern-message: "{messages.epnShouldBeNumbers}"
+        mobileNumber:
+          type: "string"
+          example: "000000000"
+          description: "mobile number of user"
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "user's name"
+        designation:
+          type: string
+          description: "user's designation"
+        mobileNumber:
+          type: "string"
+          example: "000000000"
+          description: "mobile number of user"
+    UpdateApplicationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "application's name"
+    CreateRoleRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: "role's name"
+          x-required-message: "{messages.nameIsRequired}"
+          pattern: "^[a-zA-Z]+( [a-zA-Z]+)*$"
+          x-pattern-message: "{messages.invalidRoleName}"
+          example: "HR"
+        description:
+          type: string
+          description: "description if any"
+    UpdateRoleRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "role's name"
+          pattern: "^[a-zA-Z]+( [a-zA-Z]+)*$"
+          x-pattern-message: "{messages.invalidRoleName}"
+        description:
+          type: string
+          description: "role's description"
+    CreateApplicationRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: "application's name"
+          x-required-message: "{messages.nameIsRequired}"
+    CreateUserGroupRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: "user group name"
+          x-required-message: "{messages.groupNameIsRequired}"
+        description:
+          type: string
+          maxLength: 1000
+          description: "user group's description"
+          x-size-message: "{messages.userGroupDescriptionMaxObtained}"
+    UpdateUserGroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "user group name"
+        description:
+          type: string
+          description: "user group's description"
+          maxLength: 1000
+          x-size-message: "{messages.userGroupDescriptionMaxObtained}"
+        userIds:
+          type: array
+          items:
+            type: "integer"
+            format: "int64"
+          description: id of user's
+    RoleResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoleDto"
+    RoleDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        deleted:
+          type: boolean
+    ApplicationResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicationDto"
+    AssignRolesToUserRequest:
+      type: object
+      required:
+        - roleIds
+      properties:
+        roleIds:
+          type: array
+          description: Roles to be assigned to users
+          items:
+            type: integer
+            format: int64
+          x-required-message: "{messages.roleIdsAreRequired}"
+    AssignPrivilegesToRoleRequest:
+      type: object
+      required:
+        - privilegeIds
+      properties:
+        privilegeIds:
+          type: array
+          description: Privileges to be assigned to roles
+          items:
+            type: integer
+            format: int64
+          x-required-message: "{messages.privilegeIdsAreRequired}"
+    AssignPrivilegesToApplicationRequest:
+      type: object
+      required:
+        - privilegeIds
+      properties:
+        privilegeIds:
+          type: array
+          description: Privileges to be assigned to roles
+          items:
+            type: integer
+            format: int64
+          x-required-message: "{messages.privilegeIdsAreRequired}"
+    AddApplicationsToRoleRequest:
+      type: object
+      required:
+        - applicationIds
+      properties:
+        applicationIds:
+          type: array
+          description: Application ids which privileges to be added to roles
+          items:
+            type: integer
+            format: int64
+          x-required-message: "{messages.applicationIdsAreRequired}"
+    GenericResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: User account username.
+          x-email-message: "{messages.usernameRequired}"
+        password:
+          type: string
+          description: User account password.
+          x-required-message: "{messages.passwordIsRequired}"
+    LoginApiResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TokenResponse'
+    ClientLoginApiResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientTokenResponse'
+    TokenResponse:
+      type: object
+      required:
+        - token
+      properties:
+        accessToken:
+          type: string
+          description: user access token.
+        refreshToken:
+          type: string
+          description: user refresh token.
+    ClientTokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: user access token.
+        refreshToken:
+          type: string
+          description: user refresh token.
+        userType:
+          $ref: "#/components/schemas/UserType"
+        isPasswordReset:
+          type: boolean
+    GetUsersByGroupResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UsersByGroupPage"
+    UsersByGroupPage:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int64
+          description: The current page number.
+        size:
+          type: integer
+          format: int32
+          description: The size of current page.
+        first:
+          type: boolean
+          description: whether current page is the first one.
+        last:
+          type: boolean
+          description: whether current page is the last one.
+        totalPages:
+          type: integer
+          format: int64
+          description: total no:of pages available
+        totalElements:
+          type: integer
+          format: int64
+          description: total no:of elements available.
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserDto"
+
+
+
+    GetUserGroupsResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserGroupPage"
+    UserGroupPage:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int64
+          description: The current page number.
+        size:
+          type: integer
+          format: int32
+          description: The size of current page.
+        first:
+          type: boolean
+          description: whether current page is the first one.
+        last:
+          type: boolean
+          description: whether current page is the last one.
+        totalPages:
+          type: integer
+          format: int64
+          description: total no:of pages available
+        totalElements:
+          type: integer
+          format: int64
+          description: total no:of elements available.
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserGroupDto"
+    UserGroupDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        deleted:
+          type: boolean
+    UserGroupDetailedResponse:
+      type: "object"
+      properties:
+        timestamp:
+          type: "string"
+          format: "date-time"
+          description: The server time at which this response was created.
+        code:
+          type: "integer"
+          format: "int32"
+          description: The status code the server returned.
+        message:
+          type: "string"
+          description: A short error message from server. If there are multiple errors they will be comma seperated
+        status:
+          type: "boolean"
+          description: Whether or not the request was a success or not.
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/UserGroupDetailedDto"
+    UserGroupDetailedDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        deleted:
+          type: "boolean"
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserDto"
+    GetApplicationDetailsResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicationDetailsPage"
+    ApplicationDetailsPage:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int64
+          description: The current page number.
+        size:
+          type: integer
+          format: int32
+          description: The size of current page.
+        first:
+          type: boolean
+          description: whether current page is the first one.
+        last:
+          type: boolean
+          description: whether current page is the last one.
+        totalPages:
+          type: integer
+          format: int64
+          description: total no:of pages available
+        totalElements:
+          type: integer
+          format: int64
+          description: total no:of elements available.
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicationDetailsDTO"
+    ApplicationDetailsDTO:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        deleted:
+          type: boolean
+        feature:
+          type: array
+          items:
+            $ref: "#/components/schemas/FeatureDetailedDto"
+    FeatureDetailedDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+        deleted:
+          type: boolean
+        privilege:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrivilegeDetailedDto"
+            type: PrivilegeDto
+    GetClientsResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ClientDetailsPage"
+
+    CreateClientRequest:
+      type: object
+      required:
+        - userName
+        - mobileNumber
+      properties:
+        name:
+          type: "string"
+          example: "user"
+        userName:
+          type: "string"
+          example: "user@email.com"
+          x-required-message: "{messages.userNameIsRequired}"
+        mobileNumber:
+          type: "string"
+          example: "000000000"
+          x-required-message: "{messages.mobileNumberIsRequired}"
+        clientGroupId:
+          type: "integer"
+          format: "int64"
+        clientGroupName:
+          type: "string"
+    ClientResponse:
+      type: "object"
+      properties:
+        timestamp:
+          type: "string"
+          format: "date-time"
+          description: The server time at which this response was created.
+        code:
+          type: "integer"
+          format: "int32"
+          description: The status code the server returned.
+        message:
+          type: "string"
+          description: A short error message from server. If there are multiple errors they will be comma seperated
+        status:
+          type: "boolean"
+          description: Whether or not the request was a success or not.
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ClientDto"
+    ClientDetailsPage:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int64
+          description: The current page number.
+        size:
+          type: integer
+          format: int32
+          description: The size of current page.
+        first:
+          type: boolean
+          description: whether current page is the first one.
+        last:
+          type: boolean
+          description: whether current page is the last one.
+        totalPages:
+          type: integer
+          format: int64
+          description: total no:of pages available
+        totalElements:
+          type: integer
+          format: int64
+          description: total no:of elements available.
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ClientDto"
+    ClientDto:
+      type: object
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        name:
+          type: "string"
+          example: "user"
+        userName:
+          type: "string"
+          example: "user@email.com"
+        mobileNumber:
+          type: "string"
+          example: "000000000"
+        clientGroupId:
+          type: "integer"
+          format: "int64"
+        clientGroupName:
+          type: "string"
+        firstLogin:
+          type: boolean
+        deleted:
+          type: boolean
+    UpdateClientRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "client's name"
+        clientGroupId:
+          type: "integer"
+          format: "int64"
+        clientGroupName:
+          type: "string"
+    OtpValidationRequest:
+      type: object
+      required:
+        - username
+        - otp
+      properties:
+        username:
+          type: string
+          description: User account username.
+          x-email-message: "{messages.usernameRequired}"
+        otp:
+          type: string
+          x-required-message: "{messages.otpIsRequired}"
+    ResendOtpRequest:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+          description: User account username.
+          x-email-message: "{messages.usernameRequired}"
+    PasswordResetRequest:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+          example: oldPassword123
+        newPassword:
+          type: string
+          example: newPassword123
+        confirmPassword:
+          type: string
+          example: newPassword123
+
+    UserType:
+      type: string
+      enum:
+        - CLIENT
+        - INTERNAL-USER
+  responses:
+    BadRequest:
+      description: Request syntax is invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            timestamp: 2023-02-21T18:53:37.709Z
+            code: 400
+            status: false
+            message: "bad request"
+    UnAuthorized:
+      description: Authorization information is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            timestamp: 2023-02-21T18:53:37.709Z
+            code: 401
+            status: false
+            message: "unauthorized"
+    NotFound:
+      description: Requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            timestamp: 2023-02-21T18:53:37.709Z
+            code: 404
+            status: false
+            message: "not found"
+    UnexpectedError:
+      description: Unexpected server error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            timestamp: 2023-02-21T18:53:37.709Z
+            code: 500
+            status: false
+            message: "something unexpected occured"
+    Forbidden:
+      description: Forbidden error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            timestamp: 2023-02-21T18:53:37.709Z
+            code: 403
+            status: false
+            message: "forbidden"
