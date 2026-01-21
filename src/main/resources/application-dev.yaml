@@ -10,7 +10,7 @@ spring:
         - dev
 
   datasource:
-    url: jdbc:mysql://localhost:3306/attendanceDb?useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://db-dev:3306/attendanceDb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -23,19 +23,7 @@ spring:
     show-sql: true
 
 
-  mail:
-    host: ${MAIL_HOST:localhost}
-    port: ${MAIL_PORT:3020}
-    protocol: ${MAIL_PROTOCOL:smtp}
-    password: SG.V3_H-eStSluH0juw35iuFg.DGAWtIzzedDVoZb13XVVyhvoqbrNNCJdKW5YIVbx
-    username: apikey
-    TRUSTED_SENDER: marketing@alphastar.com
-    properties:
-      mail:
-        smtps:
-          auth: true
-          starttls:
-            enable: true
+
 logging:
   level:
     com.alphastarav.identity: DEBUG
@@ -43,18 +31,26 @@ logging:
     org.springframework.security.ldap: TRACE
 
 app:
-  active-directory.enabled: false
   security:
     username: johndoe
     password: password
   utils:
     time-in-seconds-to-unlock-user: ${TIME_IN_SECONDS_TO_AUTO_UNLOCK_USER_ACCOUNT:20}
     trusted-sender: ${MAIL_TRUSTED_SENDER:admin@dev.com}
+    time_zone: UTC
     tokenUtils:
       - type: OTP
         expiryInMs: 300000
         perUserUnique: false
         limit: 3
-  jwt.secret:  ${JWT_SECRET:HlBPWkL3PkzTnMyKbW1FOkmOcdmby7GLQ38iiYP/XYH7nMl57DhLwQN7F6JWfTpzk14ryv5I5Iavz6VktEHHQw==}
-
-
+  jwt:
+    secret: ${JWT_SECRET:HlBPWkL3PkzTnMyKbW1FOkmOcdmby7GLQ38iiYP/XYH7nMl57DhLwQN7F6JWfTpzk14ryv5I5Iavz6VktEHHQw==}
+    algorithm: HS256
+    expiry-in-ms: 3600000
+    expiry-in-ms-refresh-token: 86400000
+  cors:
+    allowed-methods: [ GET, POST, PUT, DELETE, PATCH ]
+    allowed-headers: [ "*" ]
+    allowed-origins: [ "*" ]
+    exposed-headers: [ ]
+    credentials: false

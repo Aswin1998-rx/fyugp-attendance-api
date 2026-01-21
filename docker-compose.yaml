@@ -1,66 +1,56 @@
+version: "3.9"
 
 services:
-  app: &app
-    container_name: attendance-management
-    restart: on-failure
-    image: tias/attendance-management
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - ${PORT:-8000}:${PORT:-8000}
-    environment:
-      - PORT
-      - DB_URL
-      - DB_USERNAME
-      - DB_PASSWORD
-      - JWT_SECRET
-      - LOG_LEVEL
-
-    profiles:
-      - prod
-    networks:
-      - attendance-management-network
 
   app-dev:
-    <<: *app
-    container_name: attendance-management-dev
     image: tias/attendance-management-dev
-    environment:
-      PORT: ${PORT:-8877}
-      SPRING_PROFILES_ACTIVE: dev
-      DB_URL: jdbc:sqlserver://db-dev:1433;databaseName=attendanceDb;trustServerCertificate=true
+    container_name: fyugp-attendance-api-app-dev-1
 
-    profiles:
-      - dev
+    ports:
+      - "8081:8081"
+
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+
+      # MYSQL JDBC
+      DB_URL: jdbc:mysql://db-dev:3306/attendanceDb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      SERVER_PORT: 8081
+
+
+      JWT_SECRET: ${JWT_SECRET:-HlBPWkL3PkzTnMyKbW1FOkmOcdmby7GLQ38iiYP/XYH7nMl57DhLwQN7F6JWfTpzk14ryv5I5Iavz6VktEHHQw==}
+
+      LOG_LEVEL: INFO
+
     depends_on:
-      - db-dev
+      db-dev:
+        condition: service_healthy
+
+    networks:
+      - attendance-net
+
   db-dev:
-    container_name: attendance-management-dev-db
+    image: mysql:8.0
     restart: always
-    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: attendanceDb
     ports:
       - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
-      MYSQL_DATABASE: attendanceDb
-    healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
     volumes:
-      - attendance_management_dev_db_volume:/var/lib/mysql
-    profiles:
-      - dev
-      - infra
+      - attendance-db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     networks:
-      - attendance-management-network
-
+      - attendance-net
 
 networks:
-  attendance-management-network:
-    name: attendance-management-network
+  attendance-net:
+    driver: bridge
+
 volumes:
-  attendance_management_dev_db_volume:
-    name: attendance-management-dev-db-volume
+  attendance-db:

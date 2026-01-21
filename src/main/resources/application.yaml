@@ -22,24 +22,14 @@ spring:
   web:
     resources:
       add-mappings: false
-  mail:
-    host: ${MAIL_HOST}
-    port: ${MAIL_PORT}
-    protocol: ${MAIL_PROTOCOL}
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-app:
-  active-directory:
-    enabled: true
-    domain: ${AD_DOMAIN}
-    url: ${AD_URL}
+
   security:
     username: johndoe
     password: password
   jwt:
     expiry-in-ms: ${JWT_ACCESS_TOKEN_EXPIRY_IN_MS:1800000} # 30 min
     algorithm: HS256
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:HlBPWkL3PkzTnMyKbW1FOkmOcdmby7GLQ38iiYP/XYH7nMl57DhLwQN7F6JWfTpzk14ryv5I5Iavz6VktEHHQw==}
     expiry-in-ms-refresh-token: ${JWT_REFRESH_TOKEN_EXPIRY_IN_MS:2628000000} # 1 months
   utils:
     max-login-attempts: 4
@@ -62,7 +52,11 @@ app:
     exposed-headers: [ ]
     credentials: false
 server:
-  port: ${PORT:8000}
+  port: ${PORT:8081}
+app:
+  security:
+    username: johndoe
+    password: password
 
 management:
   endpoints:
