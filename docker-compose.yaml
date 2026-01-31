@@ -1,10 +1,45 @@
 version: "3.9"
 
 services:
+  app: &app
+    container_name: ifs
+    restart: on-failure
+    image: tias/attendance-api-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT:-8878}:${PORT:-8878}
+    environment:
+      - PORT
+      - DB_URL
+      - DB_USERNAME
+      - DB_PASSWORD
+      - JWT_SECRET
+      - MAIL_TRUSTED_SENDER
+      - MAIL_USERNAME
+      - MAIL_PASSWORD
+      - MAIL_PROTOCOL
+      - MAIL_HOST
+      - MAIL_PORT
+      - IDENTITY_BASE_URL
+      - FLIGHT_REPORT_DETAILED_VIEW_LINK
+      - TICKET_VIEW_LINK
+      - LOG_LEVEL
+    volumes:
+      - ifs_uploaded_files:/app/uploads
+    profiles:
+      - prod
+    networks:
+      - attendance-net
 
   app-dev:
+
+    container_name: fyugp-attendance-api-app-dev
     image: tias/attendance-management-dev
-    container_name: fyugp-attendance-api-app-dev-1
+    build:
+      context: .
+      dockerfile: Dockerfile
 
     ports:
       - "8081:8081"
