@@ -26,8 +26,6 @@ services:
       - FLIGHT_REPORT_DETAILED_VIEW_LINK
       - TICKET_VIEW_LINK
       - LOG_LEVEL
-    volumes:
-      - ifs_uploaded_files:/app/uploads
     profiles:
       - prod
     networks:
