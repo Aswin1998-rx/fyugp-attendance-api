@@ -692,216 +692,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "401":
           $ref: "#/components/responses/UnAuthorized"
-  /api/v1/applications:
-    get:
-      summary: Get list of applications
-      operationId: getAllApplications
-      deprecated: false
-      tags:
-        - Applications
-      parameters:
-        - $ref: "#/components/parameters/Page"
-        - $ref: "#/components/parameters/PageSize"
-        - $ref: "#/components/parameters/Sort"
-        - $ref: "#/components/parameters/ApplicationSearch"
-      responses:
-        "200":
-          description: list of applications
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetApplicationsResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/UnexpectedError"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "401":
-          $ref: "#/components/responses/UnAuthorized"
-    post:
-      summary: Create a new application
-      operationId: createApplication
-      tags:
-        - Applications
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateApplicationRequest'
-      responses:
-        "201":
-          description: Application created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApplicationResponse'
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/UnexpectedError"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "401":
-          $ref: "#/components/responses/UnAuthorized"
-  /api/v1/applications/{id}:
-    get:
-      summary: Get application's details
-      operationId: getApplicationDetails
-      parameters:
-        - name: "id"
-          in: "path"
-          description: "The application's id that needs to be fetched"
-          required: true
-          schema:
-            type: "integer"
-            format: "int64"
-      tags:
-        - Applications
-      responses:
-        "200":
-          description: fetch applications details
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApplicationDetailedResponse"
-        "500":
-          $ref: "#/components/responses/UnexpectedError"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "401":
-          $ref: "#/components/responses/UnAuthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-    patch:
-      summary: Update application by id
-      operationId: updateApplication
-      parameters:
-        - name: "id"
-          in: "path"
-          description: "The application's id that needs to be updated"
-          required: true
-          schema:
-            type: "integer"
-            format: "int64"
-      tags:
-        - Applications
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateApplicationRequest'
-      responses:
-        "200":
-          description: Application details updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApplicationResponse'
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/UnexpectedError"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "401":
-          $ref: "#/components/responses/UnAuthorized"
-    delete:
-      summary: Soft delete application using id
-      operationId: softDeleteApplicationById
-      parameters:
-        - name: "id"
-          in: "path"
-          description: "The application's id to be soft deleted"
-          required: true
-          schema:
-            type: "integer"
-            format: "int64"
-      tags:
-        - Applications
-      responses:
-        "200":
-          description: Successfully soft deleted application.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericResponse'
-        "500":
-          $ref: "#/components/responses/UnexpectedError"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "401":
-          $ref: "#/components/responses/UnAuthorized"
-  /api/v1/applications/{application-id}/assign-privileges:
-    post:
-      summary: Assign privileges to application
-      operationId: assignPrivilegesToApplication
-      parameters:
-        - name: "application-id"
-          in: "path"
-          description: "The application's id to which the privileges to be assigned"
-          required: true
-          schema:
-            type: "integer"
-            format: "int64"
-      tags:
-        - Applications
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AssignPrivilegesToApplicationRequest'
-      responses:
-        "200":
-          description: Successful privilege-role updation response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericResponse'
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/UnexpectedError"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "401":
-          $ref: "#/components/responses/UnAuthorized"
-  /api/v1/applications/details:
-    get:
-      summary: Get list of applications with features
-      operationId: getAllApplicationsWithDetails
-      deprecated: false
-      tags:
-        - Applications
-      parameters:
-        - $ref: "#/components/parameters/Page"
-        - $ref: "#/components/parameters/PageSize"
-        - $ref: "#/components/parameters/Sort"
-        - $ref: "#/components/parameters/ApplicationSearch"
-      responses:
-        "200":
-          description: list of applications
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GetApplicationDetailsResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/UnexpectedError"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "401":
-          $ref: "#/components/responses/UnAuthorized"
 
   /api/v1/user-groups:
     get:
@@ -1678,11 +1468,7 @@ components:
           type: "string"
         description:
           type: "string"
-        application:
-          type: array
-          items:
-            $ref: "#/components/schemas/ApplicationDto"
-            type: ApplicationDto
+
     PrivilegeDto:
       type: object
       properties:
@@ -1693,68 +1479,7 @@ components:
           type: "string"
         description:
           type: "string"
-    GetApplicationsResponse:
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: The server time at which this response was created.
-        code:
-          type: integer
-          format: int32
-          description: The status code the server returned.
-          example: 200
-        status:
-          type: boolean
-          description: Whether or not the request was a success or not.
-          default: true
-        message:
-          type: string
-          description: A short success message from server
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/ApplicationPage"
-    ApplicationPage:
-      type: object
-      properties:
-        page:
-          type: integer
-          format: int64
-          description: The current page number.
-        size:
-          type: integer
-          format: int32
-          description: The size of current page.
-        first:
-          type: boolean
-          description: whether current page is the first one.
-        last:
-          type: boolean
-          description: whether current page is the last one.
-        totalPages:
-          type: integer
-          format: int64
-          description: total no:of pages available
-        totalElements:
-          type: integer
-          format: int64
-          description: total no:of elements available.
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/ApplicationDto"
-    ApplicationDto:
-      type: object
-      properties:
-        id:
-          type: "integer"
-          format: "int64"
-        name:
-          type: "string"
-        deleted:
-          type: boolean
+
     RoleDetailedResponse:
       type: object
       properties:
@@ -1794,44 +1519,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PrivilegeDetailedDto"
-    ApplicationDetailedResponse:
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: The server time at which this response was created.
-        code:
-          type: integer
-          format: int32
-          description: The status code the server returned.
-          example: 200
-        status:
-          type: boolean
-          description: Whether or not the request was a success or not.
-          default: true
-        message:
-          type: string
-          description: A short success message from server
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/ApplicationDetailedDto"
-    ApplicationDetailedDto:
-      type: object
-      properties:
-        id:
-          type: "integer"
-          format: "int64"
-        name:
-          type: "string"
-        deleted:
-          type: boolean
-        privilege:
-          type: array
-          items:
-            $ref: "#/components/schemas/PrivilegeDto"
-            type: PrivilegeDto
     UserDetailedResponse:
       type: "object"
       properties:
@@ -2053,29 +1740,6 @@ components:
           type: "string"
         deleted:
           type: boolean
-    ApplicationResponse:
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: The server time at which this response was created.
-        code:
-          type: integer
-          format: int32
-          description: The status code the server returned.
-          example: 200
-        status:
-          type: boolean
-          description: Whether or not the request was a success or not.
-          default: true
-        message:
-          type: string
-          description: A short success message from server
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/ApplicationDto"
     AssignRolesToUserRequest:
       type: object
       required:
@@ -2383,72 +2047,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/UserDto"
-    GetApplicationDetailsResponse:
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: The server time at which this response was created.
-        code:
-          type: integer
-          format: int32
-          description: The status code the server returned.
-          example: 200
-        status:
-          type: boolean
-          description: Whether or not the request was a success or not.
-          default: true
-        message:
-          type: string
-          description: A short success message from server
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/ApplicationDetailsPage"
-    ApplicationDetailsPage:
-      type: object
-      properties:
-        page:
-          type: integer
-          format: int64
-          description: The current page number.
-        size:
-          type: integer
-          format: int32
-          description: The size of current page.
-        first:
-          type: boolean
-          description: whether current page is the first one.
-        last:
-          type: boolean
-          description: whether current page is the last one.
-        totalPages:
-          type: integer
-          format: int64
-          description: total no:of pages available
-        totalElements:
-          type: integer
-          format: int64
-          description: total no:of elements available.
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/ApplicationDetailsDTO"
-    ApplicationDetailsDTO:
-      type: object
-      properties:
-        id:
-          type: "integer"
-          format: "int64"
-        name:
-          type: "string"
-        deleted:
-          type: boolean
-        feature:
-          type: array
-          items:
-            $ref: "#/components/schemas/FeatureDetailedDto"
+
     FeatureDetailedDto:
       type: object
       properties:

@@ -138,6 +138,13 @@ auth-seed:
           - ASSIGN_USER_ROLE
           - UPDATE_USER
           - SOFT_DELETE_USER
+          - CREATE_ROLES
+          - UPDATE_ROLES
+          - LIST_ROLES
+          - FETCH_ROLE
+          - ASSIGN_ROLE_PRIVILEGE
+          - SOFT_DELETE_ROLE
+
 
     applications:
       Identity:

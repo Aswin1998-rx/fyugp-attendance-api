@@ -20,7 +20,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 import com.fyugp.fyugp_attendance_api.server.api.UsersApi;
-import com.fyugp.fyugp_attendance_api.server.model.ApplicationDto;
 import com.fyugp.fyugp_attendance_api.server.model.AssignRolesToUserRequest;
 import com.fyugp.fyugp_attendance_api.server.model.CreateUserRequest;
 import com.fyugp.fyugp_attendance_api.server.model.GenericResponse;
