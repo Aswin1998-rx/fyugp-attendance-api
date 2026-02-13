@@ -144,6 +144,7 @@ auth-seed:
           - FETCH_ROLE
           - ASSIGN_ROLE_PRIVILEGE
           - SOFT_DELETE_ROLE
+          - LIST_PRIVILEGES
 
 
     applications:
