@@ -42,6 +42,8 @@ tags:
     description: subject management apis
   - name: SubjectType
     description: subject type management apis
+  - name: Student
+    description: student management apis
 
 
 paths:
@@ -976,6 +978,287 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "401":
           $ref: "#/components/responses/UnAuthorized"
+  /api/v1/students:
+    post:
+      summary: Create a new student
+      operationId: createStudent
+      tags:
+        - Student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStudentRequest'
+      responses:
+        "201":
+          description: student created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentResponse'
+    get:
+      summary: Get list of students
+      operationId: getAllStudents
+      deprecated: false
+      tags:
+        - Student
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Sort"
+        - $ref: "#/components/parameters/StudentSearch"
+      responses:
+        "200":
+          description: list of student
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetStudentDtoResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/students/{id}:
+    put:
+      summary: Update a students
+      operationId: updateStudentById
+      tags:
+        - Student
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The student's id to which the privileges to be assigned"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStudentRequest'
+      responses:
+        "200":
+          description: student updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    get:
+      summary: Get student details using id
+      operationId: getStudentById
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The student id that needs to be fetched"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Student
+      responses:
+        "200":
+          description: fetch student details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentResponse"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Soft delete student by id
+      operationId: softDeleteStudent
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The student's id that needs to be soft deleted"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Student
+      responses:
+        "200":
+          description: student soft deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/departments:
+    post:
+      summary: Create a new departments
+      operationId: createDepartments
+      tags:
+        - Departments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDepartmentRequest'
+      responses:
+        "201":
+          description: student created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartmentResponse'
+    get:
+      summary: Get list of Departments
+      operationId: getAllDepartments
+      deprecated: false
+      tags:
+        - Departments
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Sort"
+        - $ref: "#/components/parameters/DepartmentSearch"
+      responses:
+        "200":
+          description: list of Departments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetDepartmentResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+  /api/v1/departments/{id}:
+    put:
+      summary: Update a Departments
+      operationId: updateDepartmentsById
+      tags:
+        - Departments
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The student's id to which the privileges to be assigned"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDepartmentRequest'
+      responses:
+        "200":
+          description: Departmentsupdated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartmentResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    get:
+      summary: Get Departments details using id
+      operationId: getDepartmentById
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The Departments id that needs to be fetched"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Departments
+      responses:
+        "200":
+          description: fetch Department details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DepartmentResponse"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Soft delete Departments by id
+      operationId: softDeleteDepartment
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "The Department's id that needs to be soft deleted"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      tags:
+        - Departments
+      responses:
+        "200":
+          description: Departments soft deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/UnexpectedError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "401":
+          $ref: "#/components/responses/UnAuthorized"
+
 
 #  /api/v1/user-groups:
 #    get:
@@ -1470,6 +1753,23 @@ components:
       description: This adds a string search to the following fields.
         - name
         - subjectType
+    StudentSearch:
+      in: query
+      name: search
+      schema:
+        type: string
+      required: false
+      description: This adds a string search to the following fields.
+        - name
+    DepartmentSearch:
+      in: query
+      name: search
+      schema:
+        type: string
+      required: false
+      description: This adds a string search to the following fields.
+        - name
+
     SubjectTypeSearch:
       in: query
       name: search
@@ -2447,6 +2747,254 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/SubjectTypeDto"
+    CreateStudentRequest:
+      type: object
+      required:
+        - name
+        - registrationNumber
+        - departmentId
+        - batchId
+      properties:
+        name:
+          type: string
+          description: "subjects name"
+          x-required-message: "{messages.nameIsRequired}"
+        departmentId:
+          type: integer
+          format: int64
+        batchId:
+          type: integer
+          format: int64
+        registrationNumber:
+          type: string
+
+    UpdateStudentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "student name"
+        departmentId:
+          type: integer
+          format: int64
+        batchId:
+          type: integer
+          format: int64
+        registrationNumber:
+          type: string
+    StudentResponse:
+      type: "object"
+      properties:
+        timestamp:
+          type: "string"
+          format: "date-time"
+          description: The server time at which this response was created.
+        code:
+          type: "integer"
+          format: "int32"
+          description: The status code the server returned.
+        message:
+          type: "string"
+          description: A short error message from server. If there are multiple errors they will be comma seperated
+        status:
+          type: "boolean"
+          description: Whether or not the request was a success or not.
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/StudentDto"
+    StudentDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        department:
+          $ref: "#/components/schemas/DepartmentShortDto"
+        registrationNumber:
+          type: string
+
+    GetStudentDtoResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/StudentDtoPage"
+    StudentDtoPage:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int64
+          description: The current page number.
+        size:
+          type: integer
+          format: int32
+          description: The size of current page.
+        first:
+          type: boolean
+          description: whether current page is the first one.
+        last:
+          type: boolean
+          description: whether current page is the last one.
+        totalPages:
+          type: integer
+          format: int64
+          description: total no:of pages available
+        totalElements:
+          type: integer
+          format: int64
+          description: total no:of elements available.
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/StudentDto"
+
+    CreateDepartmentRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: "department name"
+          x-required-message: "{messages.nameIsRequired}"
+        description:
+          type: string
+          description: "department description"
+        headOfDepartment:
+          type: integer
+          format: int64
+          description: "head of department"
+
+
+    UpdateDepartmentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "student name"
+        description:
+          type: string
+          description: "department description"
+        headOfDepartment:
+          type: integer
+          format: int64
+          description: "head of department"
+
+    DepartmentResponse:
+      type: "object"
+      properties:
+        timestamp:
+          type: "string"
+          format: "date-time"
+          description: The server time at which this response was created.
+        code:
+          type: "integer"
+          format: "int32"
+          description: The status code the server returned.
+        message:
+          type: "string"
+          description: A short error message from server. If there are multiple errors they will be comma seperated
+        status:
+          type: "boolean"
+          description: Whether or not the request was a success or not.
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/DepartmentDto"
+    DepartmentDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        headOfDepartment:
+          $ref:  "#/components/schemas/UserDto"
+    DepartmentShortDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+
+    GetDepartmentResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: The server time at which this response was created.
+        code:
+          type: integer
+          format: int32
+          description: The status code the server returned.
+          example: 200
+        status:
+          type: boolean
+          description: Whether or not the request was a success or not.
+          default: true
+        message:
+          type: string
+          description: A short success message from server
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/DepartmentPage"
+    DepartmentPage:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int64
+          description: The current page number.
+        size:
+          type: integer
+          format: int32
+          description: The size of current page.
+        first:
+          type: boolean
+          description: whether current page is the first one.
+        last:
+          type: boolean
+          description: whether current page is the last one.
+        totalPages:
+          type: integer
+          format: int64
+          description: total no:of pages available
+        totalElements:
+          type: integer
+          format: int64
+          description: total no:of elements available.
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/DepartmentDto"
 
 
 

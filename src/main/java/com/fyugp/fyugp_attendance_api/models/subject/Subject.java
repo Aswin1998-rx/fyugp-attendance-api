@@ -2,6 +2,7 @@ package com.fyugp.fyugp_attendance_api.models.subject;
 
 import com.fyugp.fyugp_attendance_api.models.BaseEntity;
 import com.fyugp.fyugp_attendance_api.models.student.StudentBatch;
+import com.fyugp.fyugp_attendance_api.utils.annotations.Searchable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import lombok.Setter;
 public class Subject extends BaseEntity {
 
     @Column(unique = true)
+    @Searchable
     private String name;
 
     @ManyToOne()
