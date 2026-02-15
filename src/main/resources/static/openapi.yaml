@@ -13,7 +13,7 @@ servers:
         default: 'localhost'
         description: identity server host
       port:
-        default: '8000'
+        default: '8081'
         description: identity server port
   - url: 'https://{host}'
     description: https server
@@ -1008,6 +1008,8 @@ paths:
         - $ref: "#/components/parameters/PageSize"
         - $ref: "#/components/parameters/Sort"
         - $ref: "#/components/parameters/StudentSearch"
+        - $ref: "#/components/parameters/DepartmentFilter"
+
       responses:
         "200":
           description: list of student
@@ -1761,6 +1763,14 @@ components:
       required: false
       description: This adds a string search to the following fields.
         - name
+    DepartmentFilter:
+      in: query
+      name: feedbackTypeId
+      schema:
+        type: "integer"
+        format: "int64"
+      required: false
+      description: The feedback type filter in ticket
     DepartmentSearch:
       in: query
       name: search

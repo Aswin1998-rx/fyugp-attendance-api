@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -44,11 +45,13 @@ public class StudentController  implements StudentApi {
                 .build());
     }
 
+
     @Override
-    public ResponseEntity<GetStudentDtoResponse> getAllStudents(Integer page, Integer size, String sort, String search) {
+    public ResponseEntity<GetStudentDtoResponse> getAllStudents(Integer page, Integer size, String sort, String search,Long departmentId) {
         Sort sorting = SortUtil.sortToSortType(sort);
         Pageable pageable = PageRequest.of(page, size, sorting);
         StudentSearch userSearch = StudentSearch.builder()
+                .departmentId(departmentId)
                 .search(search)
                 .build();
         Page<Student> usersPage = studentService.listAllStudents(pageable, userSearch);

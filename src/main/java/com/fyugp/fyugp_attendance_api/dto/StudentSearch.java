@@ -2,12 +2,11 @@ package com.fyugp.fyugp_attendance_api.dto;
 
 
 import com.fyugp.fyugp_attendance_api.models.department.Department;
+import com.fyugp.fyugp_attendance_api.models.department.Department_;
 import com.fyugp.fyugp_attendance_api.models.student.Student;
+import com.fyugp.fyugp_attendance_api.models.student.Student_;
 import com.fyugp.fyugp_attendance_api.utils.SpecificationUtils;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import lombok.Builder;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -21,6 +20,7 @@ import java.util.List;
 public class StudentSearch implements Specification<Student> {
 
     private String search;
+    private Long departmentId;
 
 
     @Override
@@ -33,6 +33,10 @@ public class StudentSearch implements Specification<Student> {
             if (predicate != null) {
                 predicates.add(predicate);
             }
+        }
+
+        if (departmentId != null) {
+            predicates.add(criteriaBuilder.equal(root.get(Student_.DEPARTMENT).get(Department_.ID), departmentId));
         }
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
